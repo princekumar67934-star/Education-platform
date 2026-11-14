@@ -1,0 +1,81 @@
+generator client {
+  provider = "prisma-client-js"
+}
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String         @id @default(cuid())
+  email         String         @unique
+  name          String
+  passwordHash  String
+  createdAt     DateTime       @default(now())
+  assignments   Assignment[]
+  subjects      Subject[]
+  notifications Notification[]
+  sessions      StudySession[]
+  prefs         Preference?
+}
+
+model Preference {
+  id       String  @id @default(cuid())
+  userId   String  @unique
+  user     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  remind24 Boolean @default(true)
+  remind12 Boolean @default(true)
+  remind1  Boolean @default(true)
+  sound    Boolean @default(true)
+  darkMode Boolean @default(true)
+}
+
+model Subject {
+  id          String       @id @default(cuid())
+  name        String
+  userId      String
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  assignments Assignment[]
+  @@unique([userId, name])
+}
+
+model Assignment {
+  id            String         @id @default(cuid())
+  title         String
+  description   String?
+  deadline      DateTime
+  priority      String         @default("MEDIUM")
+  status        String         @default("PENDING")
+  createdAt     DateTime       @default(now())
+  userId        String
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subjectId     String?
+  subject       Subject?       @relation(fields: [subjectId], references: [id], onDelete: SetNull)
+  notifications Notification[]
+  sessions      StudySession[]
+  @@index([userId, deadline])
+}
+
+model Notification {
+  id           String      @id @default(cuid())
+  userId       String
+  user         User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  assignmentId String?
+  assignment   Assignment? @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+  kind         String
+  message      String
+  read         Boolean     @default(false)
+  createdAt    DateTime    @default(now())
+  @@unique([assignmentId, kind])
+}
+
+model StudySession {
+  id           String      @id @default(cuid())
+  userId       String
+  user         User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  assignmentId String?
+  assignment   Assignment? @relation(fields: [assignmentId], references: [id], onDelete: SetNull)
+  title        String
+  startsAt     DateTime
+  endsAt       DateTime
+}

@@ -1,0 +1,6 @@
+@import "tailwindcss";
+body { background: radial-gradient(circle at 20% 0%, #2a1b5e, #0a1030 60%); min-height: 100vh; color: #e6ecff; font-family: system-ui, sans-serif; }
+.glass { background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.12); backdrop-filter: blur(14px); border-radius: 1rem; box-shadow: 0 10px 30px rgba(0,0,0,.35); transition: transform .2s; }
+.glass:hover { transform: translateY(-3px); }
+.inp { width:100%; padding:.6rem .8rem; border-radius:.6rem; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.15); color:inherit; }
+.btn { padding:.6rem 1rem; border-radius:.6rem; background:linear-gradient(90deg,#7c3aed,#06b6d4); font-weight:600; }
